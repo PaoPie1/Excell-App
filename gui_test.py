@@ -22,6 +22,13 @@ tabs.addTab(tab4, "Deliveries")
 
 
 
+def add_prod_to_db():
+    name = name_input.text()
+    cost = cost_input.text()
+    sell = sell_input.text()
+    stock = stock_input.text()
+    print(f"Saved! {name, cost, sell, stock}")
+
 
 
 layout1 = QVBoxLayout()
@@ -54,8 +61,11 @@ layout1.addWidget(stock_label)
 layout1.addWidget(stock_input)
 
 layout1.addWidget(save_button)
+save_button.clicked.connect(add_prod_to_db)
+
 
 tab1.setLayout(layout1)
+
 
 
 
