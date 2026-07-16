@@ -1,50 +1,70 @@
-import sqlite3
+import database
+import sys
+from PyQt6.QtWidgets import QApplication, QMainWindow, QTabWidget, QLabel, QVBoxLayout, QWidget, QLineEdit, QPushButton
 
-conn = sqlite3.connect("stainless_store.db")
-cursor = conn.cursor()
 
-conn.execute('''
-    CREATE TABLE IF NOT EXISTS products (
-             product_id INTEGER PRIMARY KEY AUTOINCREMENT,
-             unit_name TEXT NOT NULL,
-             unit_cost REAL NOT NULL,
-             selling_price REAL NOT NULL,
-             stock_quantity INTEGER NOT NULL
-             )
-''')
+class StainlessApp(QMainWindow):
+    def __init__(self):
+        super().__init__()
+        self.setWindowTitle("Stainless Shop POS")
+        self.resize(900, 600)
 
-conn.execute('''
-        CREATE TABLE IF NOT EXISTS sales (
-             sale_id INTEGER PRIMARY KEY AUTOINCREMENT,
-             product_id INTEGER,
-             sold_to TEXT NOT NULL,
-             sale_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-             sale_quantity INTEGER NOT NULL,
-             unit_cost REAL NOT NULL,
-             selling_price REAL NOT NULL
-             )
-        ''')
+        self.setup_ui()
 
-conn.commit()
-conn.close()
 
-def execute(query, param=()):
-    with sqlite3.connect("stainless_store.db") as conn:
-        cursor = conn.cursor()
-        cursor.execute(query, param)
+    def setup_ui(self):
+        tabs = QTabWidget()
 
-def update_product_name(prod_id, new_name):
-    query = "UPDATE products SET unit_name = ? WHERE product_id = ?"
-    execute(query, (new_name, prod_id))
+        self.tab1 = QWidget()
+        tab2 = QWidget()
+        tab3 = QWidget()
+        tab4 = QWidget()
 
-def update_product_cost(prod_id, new_cost):
-    query = "UPDATE products SET unit_cost = ? WHERE product_id = ?"
-    execute(query, (new_cost, prod_id))
+        tabs.addTab(self.tab1, "Add Item")
+        tabs.addTab(tab2, "New Sale")
+        tabs.addTab(tab3, "Stock List")
+        tabs.addTab(tab4, "Deliveries")
 
-def update_product_selling_price(prod_id, new_sell_price):
-    query = "UPDATE products SET selling_price = ? WHERE product_id = ?"
-    execute(query, (new_sell_price, prod_id))
+        layout1 = QVBoxLayout()
 
-def update_product_stock(prod_id, new_stock):
-    query = "UPDATE products SET stock_quantity = ? WHERE product_id = ?"
-    execute(query, (new_stock, prod_id))
+        self.name_label = QLabel("Product Unit Name:")
+        self.name_input = QLineEdit()
+
+        self.cost_label = QLabel("Product Cost:")
+        self.cost_input = QLineEdit()
+
+        self.sell_label = QLabel("Product Selling Price:")
+        self.sell_input = QLineEdit()
+
+        self.stock_label = QLabel("Stock Availabel:")
+        self.stock_input = QLineEdit()
+
+        save_button = QPushButton("Save Product")
+
+        layout1.addWidget(self.name_label)
+        layout1.addWidget(self.name_input)
+        layout1.addWidget(self.cost_label)
+        layout1.addWidget(self.cost_input)
+        layout1.addWidget(self.sell_label)
+        layout1.addWidget(self.sell_input)
+        layout1.addWidget(self.stock_label)
+        layout1.addWidget(self.stock_input)
+        layout1.addWidget(save_button)
+
+        save_button.clicked.connect(self.add_prod_to_db)
+
+        self.tab1.setLayout(layout1)
+        self.setCentralWidget(tabs)
+
+
+    def add_prod_to_db(self):
+        name = self.name_input.text()
+        cost = float(self.cost_input.text())
+        sell = float(self.sell_input.text())
+        stock = int(self.stock_input.text())
+
+
+app = QApplication(sys.argv)
+window = StainlessApp()
+window.show()
+sys.exit(app.exec())
