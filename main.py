@@ -1,6 +1,6 @@
 import database
 import sys
-from PyQt6.QtWidgets import QApplication, QMainWindow, QTabWidget, QLabel, QVBoxLayout, QWidget, QLineEdit, QPushButton
+from PyQt6.QtWidgets import QApplication, QMainWindow, QTabWidget, QLabel, QVBoxLayout, QWidget, QLineEdit, QPushButton, QMessageBox
 
 
 class StainlessApp(QMainWindow):
@@ -58,13 +58,31 @@ class StainlessApp(QMainWindow):
 
 
     def add_prod_to_db(self):
-        name = self.name_input.text()
-        cost = float(self.cost_input.text())
-        sell = float(self.sell_input.text())
-        stock = int(self.stock_input.text())
+        try:
+            name = self.name_input.text().strip()
+            if not name:
+                raise ValueError("Product name cannot be empty!")
+
+            cost = float(self.cost_input.text())
+            sell = float(self.sell_input.text())
+            stock = int(self.stock_input.text())
+            database.add_product(name, cost, sell, stock)
+            print(f"Product: {name} that costs: {cost} and sells: {sell} with a quantity of {stock} is saved!")
+            profit = sell - cost
+            QMessageBox.information(self, "Success", f"Product --{name}-- added successfully with a profit of {profit}!")
+            self.name_input.clear()
+            self.cost_input.clear()
+            self.sell_input.clear()
+            self.stock_input.clear()
+            
+
+        except ValueError as e:
+            QMessageBox.warning(self, "Input Error", "Please ensure all numbers are typed correclty and fields are not empty!")
 
 
-app = QApplication(sys.argv)
-window = StainlessApp()
-window.show()
-sys.exit(app.exec())
+if __name__ == "__main__":
+    database.initialize_db()
+    app = QApplication(sys.argv)
+    window = StainlessApp()
+    window.show()
+    sys.exit(app.exec())
