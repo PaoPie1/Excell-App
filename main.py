@@ -66,10 +66,14 @@ class StainlessApp(QMainWindow):
             cost = float(self.cost_input.text())
             sell = float(self.sell_input.text())
             stock = int(self.stock_input.text())
+
+            
             database.add_product(name, cost, sell, stock)
             print(f"Product: {name} that costs: {cost} and sells: {sell} with a quantity of {stock} is saved!")
             profit = sell - cost
             QMessageBox.information(self, "Success", f"Product --{name}-- added successfully with a profit of {profit}!")
+
+
             self.name_input.clear()
             self.cost_input.clear()
             self.sell_input.clear()

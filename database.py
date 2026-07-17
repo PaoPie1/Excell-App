@@ -50,3 +50,14 @@ def update_product_stock(prod_id, new_stock):
 def add_product(name, cost, sell, stock):
     query = "INSERT INTO products (unit_name, unit_cost, selling_price, stock_quantity) VALUES (?, ?, ?, ?)"
     execute(query, (name, cost, sell, stock))
+
+def fetch():
+    with sqlite3.connect("stainless_store.db") as conn:
+        cursor = conn.cursor()
+        cursor.execute("SELECT * FROM products")
+        return cursor.fetchall()
+
+def fetch_stock():
+    rows = fetch()
+    for row in rows:
+        stock = row[4]
