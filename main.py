@@ -1,6 +1,6 @@
 import database
 import sys
-from PyQt6.QtWidgets import QApplication, QMainWindow, QTabWidget, QLabel, QVBoxLayout, QWidget, QLineEdit, QPushButton, QMessageBox
+from PyQt6.QtWidgets import QApplication, QMainWindow, QTabWidget, QLabel, QVBoxLayout, QWidget, QLineEdit, QPushButton, QMessageBox, QTableWidget, QTableWidgetItem
 
 
 class StainlessApp(QMainWindow):
@@ -8,11 +8,10 @@ class StainlessApp(QMainWindow):
         super().__init__()
         self.setWindowTitle("Stainless Shop POS")
         self.resize(900, 600)
-
         self.setup_ui()
 
-
     def setup_ui(self):
+        #setup for tabs
         tabs = QTabWidget()
 
         self.tab1 = QWidget()
@@ -24,7 +23,9 @@ class StainlessApp(QMainWindow):
         tabs.addTab(tab2, "New Sale")
         tabs.addTab(tab3, "Stock List")
         tabs.addTab(tab4, "Deliveries")
+        
 
+        #setup for tab1 adding an item
         layout1 = QVBoxLayout()
 
         self.name_label = QLabel("Product Unit Name:")
@@ -56,6 +57,16 @@ class StainlessApp(QMainWindow):
         self.tab1.setLayout(layout1)
         self.setCentralWidget(tabs)
 
+        # setup for tab3 for stocks
+        self.table_widget = QTableWidget()
+        self.table_widget.setColumnCount(3)
+        self.table_widget.setHorizontalHeaderLabels(["Name", "Price", "Stock"])
+        layout3 = QVBoxLayout()
+        layout3.addWidget(self.table_widget)
+        tab3.setLayout(layout3)
+        self.load_db_to_table()
+
+
 
     def add_prod_to_db(self):
         try:
@@ -78,10 +89,21 @@ class StainlessApp(QMainWindow):
             self.cost_input.clear()
             self.sell_input.clear()
             self.stock_input.clear()
-            
+
+            #automatically reloads and adds the new item for tab3
+            self.load_db_to_table()
 
         except ValueError as e:
             QMessageBox.warning(self, "Input Error", "Please ensure all numbers are typed correclty and fields are not empty!")
+
+
+    def load_db_to_table(self):
+        rows = database.fetch_stock()
+        self.table_widget.setRowCount(len(rows))
+        for i, row in enumerate(rows):
+            self.table_widget.setItem(i, 0, QTableWidgetItem(str(row[1])))
+            self.table_widget.setItem(i, 1, QTableWidgetItem(str(row[3])))
+            self.table_widget.setItem(i, 2, QTableWidgetItem(str(row[4])))
 
 
 if __name__ == "__main__":

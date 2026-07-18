@@ -58,6 +58,4 @@ def fetch():
         return cursor.fetchall()
 
 def fetch_stock():
-    rows = fetch()
-    for row in rows:
-        stock = row[4]
+    return fetch()
