@@ -59,3 +59,10 @@ def fetch():
 
 def fetch_stock():
     return fetch()
+
+def fetch_prod_names():
+    rows = fetch()
+    prod_names = []
+    for i, row in enumerate(rows):
+        prod_names += row[1]
+        return prod_names

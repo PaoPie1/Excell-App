@@ -1,6 +1,6 @@
 import database
 import sys
-from PyQt6.QtWidgets import QApplication, QMainWindow, QTabWidget, QLabel, QVBoxLayout, QWidget, QLineEdit, QPushButton, QMessageBox, QTableWidget, QTableWidgetItem
+from PyQt6.QtWidgets import QApplication, QMainWindow, QTabWidget, QLabel, QVBoxLayout, QWidget, QLineEdit, QPushButton, QMessageBox, QTableWidget, QTableWidgetItem, QComboBox
 
 
 class StainlessApp(QMainWindow):
@@ -15,14 +15,14 @@ class StainlessApp(QMainWindow):
         tabs = QTabWidget()
 
         self.tab1 = QWidget()
-        tab2 = QWidget()
-        tab3 = QWidget()
-        tab4 = QWidget()
+        self.tab2 = QWidget()
+        self.tab3 = QWidget()
+        self.tab4 = QWidget()
 
         tabs.addTab(self.tab1, "Add Item")
-        tabs.addTab(tab2, "New Sale")
-        tabs.addTab(tab3, "Stock List")
-        tabs.addTab(tab4, "Deliveries")
+        tabs.addTab(self.tab2, "New Sale")
+        tabs.addTab(self.tab3, "Stock List")
+        tabs.addTab(self.tab4, "Deliveries")
         
 
         #setup for tab1 adding an item
@@ -63,7 +63,7 @@ class StainlessApp(QMainWindow):
         self.table_widget.setHorizontalHeaderLabels(["Name", "Price", "Stock"])
         layout3 = QVBoxLayout()
         layout3.addWidget(self.table_widget)
-        tab3.setLayout(layout3)
+        self.tab3.setLayout(layout3)
         self.load_db_to_table()
 
 
@@ -105,6 +105,21 @@ class StainlessApp(QMainWindow):
             self.table_widget.setItem(i, 1, QTableWidgetItem(str(row[3])))
             self.table_widget.setItem(i, 2, QTableWidgetItem(str(row[4])))
 
+
+    def sale_prod_names(self):
+        prod_names = database.fetch_prod_names()
+        self.dropdown = QComboBox()
+        self.dropdown.addItems([prod_names])
+
+
+    def new_sale(self):
+        layout2 = QVBoxLayout()
+        self.name_label = QLabel("Products:")
+
+        self.sale_prod_names()
+
+        layout2.addWidget(self.name_label)
+        layout2.addWidget(self.self.dropdown)
 
 if __name__ == "__main__":
     database.initialize_db()
