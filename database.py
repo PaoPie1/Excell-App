@@ -64,5 +64,12 @@ def fetch_prod_names():
     rows = fetch()
     prod_names = []
     for i, row in enumerate(rows):
-        prod_names += row[1]
-        return prod_names
+        prod_names.append(row[1])
+
+    return prod_names
+
+def fetch_prod_stock(name):
+    with sqlite3.connect("stainless_store.db") as conn:
+        cursor = conn.cursor()
+        cursor.execute("SELECT product_id, selling_price, stock_quantity FROM products WHERE unit_name = ?", (name,))
+        return cursor.fetchone()

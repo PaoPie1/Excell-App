@@ -10,6 +10,15 @@ class StainlessApp(QMainWindow):
         self.resize(900, 600)
         self.setup_ui()
 
+
+
+
+
+
+
+
+
+
     def setup_ui(self):
         #setup for tabs
         tabs = QTabWidget()
@@ -67,6 +76,39 @@ class StainlessApp(QMainWindow):
         self.load_db_to_table()
 
 
+        #setup for tab2 for new sale
+        self.dropdown = QComboBox()
+        layout2 = QVBoxLayout()
+        self.name_label = QLabel("Products:")
+
+        self.sale_prod_names_update()
+
+        self.dropdown.currentTextChanged.connect(self.get_dropdown_stock)
+
+        self.stock_display_label = QLabel("Available stock: 0")
+        self.get_dropdown_stock()
+        
+        layout2.addWidget(self.name_label)
+        layout2.addWidget(self.dropdown)
+        layout2.addWidget(self.stock_display_label)
+        self.tab2.setLayout(layout2)
+
+        
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     def add_prod_to_db(self):
         try:
@@ -83,7 +125,9 @@ class StainlessApp(QMainWindow):
             print(f"Product: {name} that costs: {cost} and sells: {sell} with a quantity of {stock} is saved!")
             profit = sell - cost
             QMessageBox.information(self, "Success", f"Product --{name}-- added successfully with a profit of {profit}!")
-
+            
+            #updates the dropdown options in tab2 for new sale
+            self.sale_prod_names_update()
 
             self.name_input.clear()
             self.cost_input.clear()
@@ -97,29 +141,70 @@ class StainlessApp(QMainWindow):
             QMessageBox.warning(self, "Input Error", "Please ensure all numbers are typed correclty and fields are not empty!")
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
     def load_db_to_table(self):
         rows = database.fetch_stock()
         self.table_widget.setRowCount(len(rows))
         for i, row in enumerate(rows):
             self.table_widget.setItem(i, 0, QTableWidgetItem(str(row[1])))
             self.table_widget.setItem(i, 1, QTableWidgetItem(str(row[3])))
-            self.table_widget.setItem(i, 2, QTableWidgetItem(str(row[4])))
+            self.table_widget.setItem(i, 2, QTableWidgetItem(str(row[4])))       
+                
 
 
-    def sale_prod_names(self):
+
+
+
+
+
+
+
+
+    def sale_prod_names_update(self):
         prod_names = database.fetch_prod_names()
-        self.dropdown = QComboBox()
-        self.dropdown.addItems([prod_names])
+        self.dropdown.clear()
+        self.dropdown.addItems(prod_names)
+
+        
 
 
-    def new_sale(self):
-        layout2 = QVBoxLayout()
-        self.name_label = QLabel("Products:")
 
-        self.sale_prod_names()
 
-        layout2.addWidget(self.name_label)
-        layout2.addWidget(self.self.dropdown)
+
+
+
+
+
+    def get_dropdown_stock(self):
+        selected_prod_name = self.dropdown.currentText()
+        prod_stock = database.fetch_prod_stock(selected_prod_name)
+
+        if prod_stock:
+            stock = prod_stock[2]
+            self.stock_display_label.setText(f"Available stock: {stock}")
+
+
+
+
+
+
+
+
+
+
+
 
 if __name__ == "__main__":
     database.initialize_db()
