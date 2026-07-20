@@ -66,14 +66,11 @@ class StainlessApp(QMainWindow):
         self.tab1.setLayout(layout1)
         self.setCentralWidget(tabs)
 
-        # setup for tab3 for stocks
-        self.table_widget = QTableWidget()
-        self.table_widget.setColumnCount(3)
-        self.table_widget.setHorizontalHeaderLabels(["Name", "Price", "Stock"])
-        layout3 = QVBoxLayout()
-        layout3.addWidget(self.table_widget)
-        self.tab3.setLayout(layout3)
-        self.load_db_to_table()
+
+
+
+
+
 
 
         #setup for tab2 for new sale
@@ -81,11 +78,11 @@ class StainlessApp(QMainWindow):
         layout2 = QVBoxLayout()
         self.name_label = QLabel("Products:")
 
-        self.sale_prod_names_update()
-
-        self.dropdown.currentTextChanged.connect(self.get_dropdown_stock)
-
         self.stock_display_label = QLabel("Available stock: 0")
+
+        self.sale_prod_names_update()
+        self.dropdown.currentTextChanged.connect(self.get_dropdown_stock)
+        
         self.get_dropdown_stock()
         
         layout2.addWidget(self.name_label)
@@ -93,18 +90,32 @@ class StainlessApp(QMainWindow):
         layout2.addWidget(self.stock_display_label)
         self.tab2.setLayout(layout2)
 
+
+
+
+
+
+
+
+        # setup for tab3 for stocks
+        self.table_widget = QTableWidget()
+        self.table_widget.setColumnCount(3)
+        self.table_widget.setHorizontalHeaderLabels(["Name", "Price", "Stock"])
+        layout3 = QVBoxLayout()
+
+        #adding reset button
+        reset_butt = QPushButton("Reset Database")
+        reset_butt.clicked.connect(self.delete_db)
+        
+        layout3.addWidget(reset_butt)
+        layout3.addWidget(self.table_widget)
+        self.tab3.setLayout(layout3)
+        self.load_db_to_table()
+
+
         
 
-
-
-
-
-
-
-
-
-
-
+        
 
 
 
@@ -198,6 +209,28 @@ class StainlessApp(QMainWindow):
 
 
 
+
+
+
+
+
+
+    def delete_db(self):
+        delete_confirmation = QMessageBox.question(
+            self,
+            "WARNING",
+            "Are you sure you want to delete all database?",
+            QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No,
+            QMessageBox.StandardButton.No
+        )
+
+        if delete_confirmation == QMessageBox.StandardButton.Yes:
+            database.delete_db()
+
+            self.load_db_to_table()
+            self.sale_prod_names_update()
+
+            QMessageBox.information(self, "Success", "The database has been reset.")
 
 
 

@@ -73,3 +73,12 @@ def fetch_prod_stock(name):
         cursor = conn.cursor()
         cursor.execute("SELECT product_id, selling_price, stock_quantity FROM products WHERE unit_name = ?", (name,))
         return cursor.fetchone()
+    
+def delete_db():
+    with sqlite3.connect("stainless_store.db") as conn:
+        cursor = conn.cursor()
+        cursor.execute("DELETE FROM sales")
+        cursor.execute("DELETE FROM products")
+
+        cursor.execute("DELETE FROM sqlite_sequence WHERE name='sales'")
+        cursor.execute("DELETE FROM sqlite_sequence WHERE name='products'")
