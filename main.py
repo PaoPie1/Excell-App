@@ -77,17 +77,18 @@ class StainlessApp(QMainWindow):
         self.dropdown = QComboBox()
         layout2 = QVBoxLayout()
         self.name_label = QLabel("Products:")
-
         self.stock_display_label = QLabel("Available stock: 0")
-
+        self.price_display_label = QLabel("Price: 0")
         self.sale_prod_names_update()
-        self.dropdown.currentTextChanged.connect(self.get_dropdown_stock)
+        self.dropdown.currentTextChanged.connect(self.get_dropdown_data)
+        self.get_dropdown_data()
         
-        self.get_dropdown_stock()
+
         
         layout2.addWidget(self.name_label)
         layout2.addWidget(self.dropdown)
         layout2.addWidget(self.stock_display_label)
+        layout2.addWidget(self.price_display_label)
         self.tab2.setLayout(layout2)
 
 
@@ -166,7 +167,7 @@ class StainlessApp(QMainWindow):
 
 
     def load_db_to_table(self):
-        rows = database.fetch_stock()
+        rows = database.fetch()
         self.table_widget.setRowCount(len(rows))
         for i, row in enumerate(rows):
             self.table_widget.setItem(i, 0, QTableWidgetItem(str(row[1])))
@@ -198,16 +199,15 @@ class StainlessApp(QMainWindow):
 
 
 
-    def get_dropdown_stock(self):
+    def get_dropdown_data(self):
         selected_prod_name = self.dropdown.currentText()
-        prod_stock = database.fetch_prod_stock(selected_prod_name)
+        prod_data = database.fetch_prod_by_name(selected_prod_name)
 
-        if prod_stock:
-            stock = prod_stock[2]
+        if prod_data:
+            price = prod_data[1]
+            stock = prod_data[2]
             self.stock_display_label.setText(f"Available stock: {stock}")
-
-
-
+            self.price_display_label.setText(f"Price: {price}")
 
 
 
@@ -231,6 +231,8 @@ class StainlessApp(QMainWindow):
             self.sale_prod_names_update()
 
             QMessageBox.information(self, "Success", "The database has been reset.")
+
+
 
 
 

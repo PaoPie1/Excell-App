@@ -57,8 +57,6 @@ def fetch():
         cursor.execute("SELECT * FROM products")
         return cursor.fetchall()
 
-def fetch_stock():
-    return fetch()
 
 def fetch_prod_names():
     rows = fetch()
@@ -68,11 +66,12 @@ def fetch_prod_names():
 
     return prod_names
 
-def fetch_prod_stock(name):
+def fetch_prod_by_name(name):
     with sqlite3.connect("stainless_store.db") as conn:
         cursor = conn.cursor()
         cursor.execute("SELECT product_id, selling_price, stock_quantity FROM products WHERE unit_name = ?", (name,))
         return cursor.fetchone()
+    
     
 def delete_db():
     with sqlite3.connect("stainless_store.db") as conn:
