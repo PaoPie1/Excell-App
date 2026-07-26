@@ -78,10 +78,16 @@ class StainlessApp(QMainWindow):
         layout2 = QVBoxLayout()
         self.name_label = QLabel("Products:")
         self.stock_display_label = QLabel("Available stock: 0")
-        self.price_display_label = QLabel("Price: 0")
+        self.price_display_label = QLabel("Price:")
+        self.price_display_input = QLineEdit()
+        self.save_new_sale = QPushButton("Add Sale")
+
+
+
         self.sale_prod_names_update()
         self.dropdown.currentTextChanged.connect(self.get_dropdown_data)
         self.get_dropdown_data()
+        
         
 
         
@@ -89,6 +95,8 @@ class StainlessApp(QMainWindow):
         layout2.addWidget(self.dropdown)
         layout2.addWidget(self.stock_display_label)
         layout2.addWidget(self.price_display_label)
+        layout2.addWidget(self.price_display_input)
+        layout2.addWidget(self.save_new_sale)
         self.tab2.setLayout(layout2)
 
 
@@ -197,8 +205,6 @@ class StainlessApp(QMainWindow):
 
 
 
-
-
     def get_dropdown_data(self):
         selected_prod_name = self.dropdown.currentText()
         prod_data = database.fetch_prod_by_name(selected_prod_name)
@@ -207,7 +213,7 @@ class StainlessApp(QMainWindow):
             price = prod_data[1]
             stock = prod_data[2]
             self.stock_display_label.setText(f"Available stock: {stock}")
-            self.price_display_label.setText(f"Price: {price}")
+            self.price_display_input.setPlaceholderText(str(price))
 
 
 
