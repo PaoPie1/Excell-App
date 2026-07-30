@@ -80,6 +80,9 @@ class StainlessApp(QMainWindow):
         self.stock_display_label = QLabel("Available stock: 0")
         self.price_display_label = QLabel("Price:")
         self.price_display_input = QLineEdit()
+        self.selled_to_label = QLabel("Selled to:")
+        self.selled_to = QLineEdit()
+        self.selled_to.setPlaceholderText("Enter name...")
         self.save_new_sale = QPushButton("Add Sale")
 
 
@@ -87,6 +90,11 @@ class StainlessApp(QMainWindow):
         self.sale_prod_names_update()
         self.dropdown.currentTextChanged.connect(self.get_dropdown_data)
         self.get_dropdown_data()
+
+
+
+        self.save_new_sale.clicked.connect(self.new_sale) 
+        
         
         
 
@@ -96,6 +104,8 @@ class StainlessApp(QMainWindow):
         layout2.addWidget(self.stock_display_label)
         layout2.addWidget(self.price_display_label)
         layout2.addWidget(self.price_display_input)
+        layout2.addWidget(self.selled_to_label)
+        layout2.addWidget(self.selled_to)
         layout2.addWidget(self.save_new_sale)
         self.tab2.setLayout(layout2)
 
@@ -238,6 +248,16 @@ class StainlessApp(QMainWindow):
 
             QMessageBox.information(self, "Success", "The database has been reset.")
 
+
+
+
+
+
+
+
+
+    def new_sale(self):
+        price = self.price_display_input()
 
 
 
