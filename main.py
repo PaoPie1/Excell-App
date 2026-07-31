@@ -73,41 +73,49 @@ class StainlessApp(QMainWindow):
 
 
 
+
+
         #setup for tab2 for new sale
         self.dropdown = QComboBox()
         layout2 = QVBoxLayout()
         self.name_label = QLabel("Products:")
+
         self.stock_display_label = QLabel("Available stock: 0")
+
         self.price_display_label = QLabel("Price:")
         self.price_display_input = QLineEdit()
+
         self.selled_to_label = QLabel("Selled to:")
         self.selled_to = QLineEdit()
         self.selled_to.setPlaceholderText("Enter name...")
+
         self.save_new_sale = QPushButton("Add Sale")
 
-
-
-        self.sale_prod_names_update()
-        self.dropdown.currentTextChanged.connect(self.get_dropdown_data)
-        self.get_dropdown_data()
-
-
+        self.cost = QLabel("Unit Cost: 0")
 
         self.save_new_sale.clicked.connect(self.new_sale) 
         
-        
+        self.sale_prod_names_update()
+        self.dropdown.currentTextChanged.connect(self.get_dropdown_data)
+        self.get_dropdown_data()
         
 
         
         layout2.addWidget(self.name_label)
         layout2.addWidget(self.dropdown)
         layout2.addWidget(self.stock_display_label)
+        layout2.addWidget(self.cost)
         layout2.addWidget(self.price_display_label)
         layout2.addWidget(self.price_display_input)
         layout2.addWidget(self.selled_to_label)
         layout2.addWidget(self.selled_to)
         layout2.addWidget(self.save_new_sale)
         self.tab2.setLayout(layout2)
+
+
+
+
+
 
 
 
@@ -139,7 +147,7 @@ class StainlessApp(QMainWindow):
 
 
 
-
+    # saves product to database
     def add_prod_to_db(self):
         try:
             name = self.name_input.text().strip()
@@ -201,7 +209,7 @@ class StainlessApp(QMainWindow):
 
 
 
-
+    # prod names
     def sale_prod_names_update(self):
         prod_names = database.fetch_prod_names()
         self.dropdown.clear()
@@ -214,7 +222,7 @@ class StainlessApp(QMainWindow):
 
 
 
-
+    # gets the product data 
     def get_dropdown_data(self):
         selected_prod_name = self.dropdown.currentText()
         prod_data = database.fetch_prod_by_name(selected_prod_name)
@@ -222,15 +230,17 @@ class StainlessApp(QMainWindow):
         if prod_data:
             price = prod_data[1]
             stock = prod_data[2]
+            cost = prod_data[3]
             self.stock_display_label.setText(f"Available stock: {stock}")
             self.price_display_input.setPlaceholderText(str(price))
+            self.cost.setText(f"Unit Cost: {cost}")
 
 
 
 
 
 
-
+    # deletes the whole database for products
     def delete_db(self):
         delete_confirmation = QMessageBox.question(
             self,
@@ -257,7 +267,10 @@ class StainlessApp(QMainWindow):
 
 
     def new_sale(self):
-        price = self.price_display_input()
+        prod = self.dropdown.currentText()
+        stock = self.stock_display_label
+        price = self.price_display_input
+        selled = self.selled_to
 
 
 

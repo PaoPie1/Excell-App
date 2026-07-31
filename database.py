@@ -1,3 +1,4 @@
+import main
 import sqlite3
 
 def initialize_db():
@@ -69,7 +70,7 @@ def fetch_prod_names():
 def fetch_prod_by_name(name):
     with sqlite3.connect("stainless_store.db") as conn:
         cursor = conn.cursor()
-        cursor.execute("SELECT product_id, selling_price, stock_quantity FROM products WHERE unit_name = ?", (name,))
+        cursor.execute("SELECT product_id, selling_price, stock_quantity, unit_cost FROM products WHERE unit_name = ?", (name,))
         return cursor.fetchone()
     
     
@@ -81,3 +82,8 @@ def delete_db():
 
         cursor.execute("DELETE FROM sqlite_sequence WHERE name='sales'")
         cursor.execute("DELETE FROM sqlite_sequence WHERE name='products'")
+
+def new_sale(prod, stock, price, selled):
+    with sqlite3.connect("stainless_store.db") as conn:
+        cursor = conn.cursor()
+        cursor.execute("INSERT INTO sales ()")
