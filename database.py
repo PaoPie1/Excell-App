@@ -83,7 +83,6 @@ def delete_db():
         cursor.execute("DELETE FROM sqlite_sequence WHERE name='sales'")
         cursor.execute("DELETE FROM sqlite_sequence WHERE name='products'")
 
-def new_sale(prod, stock, price, selled):
-    with sqlite3.connect("stainless_store.db") as conn:
-        cursor = conn.cursor()
-        cursor.execute("INSERT INTO sales ()")
+def new_sale(id, selled, quantity, cost, price):
+    query = "INSERT INTO sales (product_id, sold_to, sale_quantity, unit_cost, selling_price) VALUES (?, ?, ?, ?, ?)"
+    execute(query, (id, selled, quantity, cost, price))

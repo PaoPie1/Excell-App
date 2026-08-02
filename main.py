@@ -93,6 +93,10 @@ class StainlessApp(QMainWindow):
 
         self.cost = QLabel("Unit Cost: 0")
 
+        self.sale_quantity_label = QLabel("Quantity:")
+        self.sale_quantity = QLineEdit()
+
+
         self.save_new_sale.clicked.connect(self.new_sale) 
         
         self.sale_prod_names_update()
@@ -107,6 +111,8 @@ class StainlessApp(QMainWindow):
         layout2.addWidget(self.cost)
         layout2.addWidget(self.price_display_label)
         layout2.addWidget(self.price_display_input)
+        layout2.addWidget(self.sale_quantity_label)
+        layout2.addWidget(self.sale_quantity)
         layout2.addWidget(self.selled_to_label)
         layout2.addWidget(self.selled_to)
         layout2.addWidget(self.save_new_sale)
@@ -228,12 +234,14 @@ class StainlessApp(QMainWindow):
         prod_data = database.fetch_prod_by_name(selected_prod_name)
 
         if prod_data:
+            prod_id = prod_data[0]
             price = prod_data[1]
             stock = prod_data[2]
             cost = prod_data[3]
             self.stock_display_label.setText(f"Available stock: {stock}")
             self.price_display_input.setPlaceholderText(str(price))
             self.cost.setText(f"Unit Cost: {cost}")
+            self.prod_id = prod_id
 
 
 
@@ -267,10 +275,34 @@ class StainlessApp(QMainWindow):
 
 
     def new_sale(self):
-        prod = self.dropdown.currentText()
-        stock = self.stock_display_label
-        price = self.price_display_input
-        selled = self.selled_to
+        id = self.prod_id
+        #prod = self.dropdown.currentText()
+        selled = self.selled_to.text().strip()
+        quantity = int(self.sale_quantity.text())
+        cost_text = self.cost.text().replace("Unit Cost: ", "").strip()
+        cost = float(cost_text)
+        price_text = self.price_display_input.text().strip()
+        if not price_text:
+            price_text = self.price_display_input.placeholderText()
+            
+        price = float(price_text)
+        #stock = self.stock_display_label
+
+        database.new_sale(id, selled, quantity, cost, price)
+
+        self.selled_to.clear()
+        self.sale_quantity.clear()
+        self.price_display_input.clear()
+
+        # sale_id INTEGER PRIMARY KEY AUTOINCREMENT,
+        # product_id INTEGER,
+        # sold_to TEXT NOT NULL,
+        # sale_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        # sale_quantity INTEGER NOT NULL,
+        # unit_cost REAL NOT NULL,
+        # selling_price REAL NOT NULL
+
+        
 
 
 
