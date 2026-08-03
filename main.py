@@ -288,7 +288,23 @@ class StainlessApp(QMainWindow):
         price = float(price_text)
         #stock = self.stock _display_label
 
+
+
+        # gets the available stock then gets the text replaces the text with nothing then strips whitespaces
+        stock_int = int(self.stock_display_label.text().replace("Available stock: ", "").strip())
+
+        # gets the actual stock by deducting the bought quantity
+        stock = stock_int - quantity 
+
+        # calls the function for updating the stock inside the database
+        database.update_product_stock(id, stock) 
+
+
+    
         database.new_sale(id, sold, quantity, cost, price)
+
+
+
 
         self.sold_to.clear()
         self.sale_quantity.clear()
