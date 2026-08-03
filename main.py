@@ -46,7 +46,7 @@ class StainlessApp(QMainWindow):
         self.sell_label = QLabel("Product Selling Price:")
         self.sell_input = QLineEdit()
 
-        self.stock_label = QLabel("Stock Availabel:")
+        self.stock_label = QLabel("Stock Available:")
         self.stock_input = QLineEdit()
 
         save_button = QPushButton("Save Product")
@@ -85,9 +85,9 @@ class StainlessApp(QMainWindow):
         self.price_display_label = QLabel("Price:")
         self.price_display_input = QLineEdit()
 
-        self.selled_to_label = QLabel("Selled to:")
-        self.selled_to = QLineEdit()
-        self.selled_to.setPlaceholderText("Enter name...")
+        self.sold_to_label = QLabel("sold to:")
+        self.sold_to = QLineEdit()
+        self.sold_to.setPlaceholderText("Enter name...")
 
         self.save_new_sale = QPushButton("Add Sale")
 
@@ -113,8 +113,8 @@ class StainlessApp(QMainWindow):
         layout2.addWidget(self.price_display_input)
         layout2.addWidget(self.sale_quantity_label)
         layout2.addWidget(self.sale_quantity)
-        layout2.addWidget(self.selled_to_label)
-        layout2.addWidget(self.selled_to)
+        layout2.addWidget(self.sold_to_label)
+        layout2.addWidget(self.sold_to)
         layout2.addWidget(self.save_new_sale)
         self.tab2.setLayout(layout2)
 
@@ -182,7 +182,7 @@ class StainlessApp(QMainWindow):
             self.load_db_to_table()
 
         except ValueError as e:
-            QMessageBox.warning(self, "Input Error", "Please ensure all numbers are typed correclty and fields are not empty!")
+            QMessageBox.warning(self, "Input Error", "Please ensure all numbers are typed correctly and fields are not empty!")
 
 
 
@@ -277,7 +277,7 @@ class StainlessApp(QMainWindow):
     def new_sale(self):
         id = self.prod_id
         #prod = self.dropdown.currentText()
-        selled = self.selled_to.text().strip()
+        sold = self.sold_to.text().strip()
         quantity = int(self.sale_quantity.text())
         cost_text = self.cost.text().replace("Unit Cost: ", "").strip()
         cost = float(cost_text)
@@ -286,11 +286,11 @@ class StainlessApp(QMainWindow):
             price_text = self.price_display_input.placeholderText()
             
         price = float(price_text)
-        #stock = self.stock_display_label
+        #stock = self.stock _display_label
 
-        database.new_sale(id, selled, quantity, cost, price)
+        database.new_sale(id, sold, quantity, cost, price)
 
-        self.selled_to.clear()
+        self.sold_to.clear()
         self.sale_quantity.clear()
         self.price_display_input.clear()
 
