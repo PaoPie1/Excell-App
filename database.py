@@ -1,9 +1,10 @@
 import main
 import sqlite3
 
+
 def initialize_db():
     with sqlite3.connect("stainless_store.db") as conn:
-        conn.execute('''
+        conn.execute("""
             CREATE TABLE IF NOT EXISTS products (
                     product_id INTEGER PRIMARY KEY AUTOINCREMENT,
                     unit_name TEXT NOT NULL,
@@ -11,9 +12,9 @@ def initialize_db():
                     selling_price REAL NOT NULL,
                     stock_quantity INTEGER NOT NULL
                     )
-        ''')
+        """)
 
-        conn.execute('''
+        conn.execute("""
                 CREATE TABLE IF NOT EXISTS sales (
                     sale_id INTEGER PRIMARY KEY AUTOINCREMENT,
                     product_id INTEGER,
@@ -23,7 +24,7 @@ def initialize_db():
                     unit_cost REAL NOT NULL,
                     selling_price REAL NOT NULL
                     )
-                ''')
+                """)
 
 
 def execute(query, param=()):
@@ -32,25 +33,31 @@ def execute(query, param=()):
         cursor.execute(query, param)
         conn.commit()
 
+
 def update_product_name(prod_id, new_name):
     query = "UPDATE products SET unit_name = ? WHERE product_id = ?"
     execute(query, (new_name, prod_id))
+
 
 def update_product_cost(prod_id, new_cost):
     query = "UPDATE products SET unit_cost = ? WHERE product_id = ?"
     execute(query, (new_cost, prod_id))
 
+
 def update_product_selling_price(prod_id, new_sell_price):
     query = "UPDATE products SET selling_price = ? WHERE product_id = ?"
     execute(query, (new_sell_price, prod_id))
+
 
 def update_product_stock(prod_id, new_stock):
     query = "UPDATE products SET stock_quantity = ? WHERE product_id = ?"
     execute(query, (new_stock, prod_id))
 
+
 def add_product(name, cost, sell, stock):
     query = "INSERT INTO products (unit_name, unit_cost, selling_price, stock_quantity) VALUES (?, ?, ?, ?)"
     execute(query, (name, cost, sell, stock))
+
 
 def fetch():
     with sqlite3.connect("stainless_store.db") as conn:
@@ -67,13 +74,17 @@ def fetch_prod_names():
 
     return prod_names
 
+
 def fetch_prod_by_name(name):
     with sqlite3.connect("stainless_store.db") as conn:
         cursor = conn.cursor()
-        cursor.execute("SELECT product_id, selling_price, stock_quantity, unit_cost FROM products WHERE unit_name = ?", (name,))
+        cursor.execute(
+            "SELECT product_id, selling_price, stock_quantity, unit_cost FROM products WHERE unit_name = ?",
+            (name,),
+        )
         return cursor.fetchone()
-    
-    
+
+
 def delete_db():
     with sqlite3.connect("stainless_store.db") as conn:
         cursor = conn.cursor()
@@ -82,6 +93,7 @@ def delete_db():
 
         cursor.execute("DELETE FROM sqlite_sequence WHERE name='sales'")
         cursor.execute("DELETE FROM sqlite_sequence WHERE name='products'")
+
 
 def new_sale(id, sold, quantity, cost, price):
     query = "INSERT INTO sales (product_id, sold_to, sale_quantity, unit_cost, selling_price) VALUES (?, ?, ?, ?, ?)"

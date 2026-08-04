@@ -1,6 +1,19 @@
 import database
 import sys
-from PyQt6.QtWidgets import QApplication, QMainWindow, QTabWidget, QLabel, QVBoxLayout, QWidget, QLineEdit, QPushButton, QMessageBox, QTableWidget, QTableWidgetItem, QComboBox
+from PyQt6.QtWidgets import (
+    QApplication,
+    QMainWindow,
+    QTabWidget,
+    QLabel,
+    QVBoxLayout,
+    QWidget,
+    QLineEdit,
+    QPushButton,
+    QMessageBox,
+    QTableWidget,
+    QTableWidgetItem,
+    QComboBox,
+)
 
 
 class StainlessApp(QMainWindow):
@@ -10,17 +23,8 @@ class StainlessApp(QMainWindow):
         self.resize(900, 600)
         self.setup_ui()
 
-
-
-
-
-
-
-
-
-
     def setup_ui(self):
-        #setup for tabs
+        # setup for tabs
         tabs = QTabWidget()
 
         self.tab1 = QWidget()
@@ -32,9 +36,8 @@ class StainlessApp(QMainWindow):
         tabs.addTab(self.tab2, "New Sale")
         tabs.addTab(self.tab3, "Stock List")
         tabs.addTab(self.tab4, "Deliveries")
-        
 
-        #setup for tab1 adding an item
+        # setup for tab1 adding an item
         layout1 = QVBoxLayout()
 
         self.name_label = QLabel("Product Unit Name:")
@@ -66,16 +69,7 @@ class StainlessApp(QMainWindow):
         self.tab1.setLayout(layout1)
         self.setCentralWidget(tabs)
 
-
-
-
-
-
-
-
-
-
-        #setup for tab2 for new sale
+        # setup for tab2 for new sale
         self.dropdown = QComboBox()
         layout2 = QVBoxLayout()
         self.name_label = QLabel("Products:")
@@ -96,15 +90,12 @@ class StainlessApp(QMainWindow):
         self.sale_quantity_label = QLabel("Quantity:")
         self.sale_quantity = QLineEdit()
 
+        self.save_new_sale.clicked.connect(self.new_sale)
 
-        self.save_new_sale.clicked.connect(self.new_sale) 
-        
         self.sale_prod_names_update()
         self.dropdown.currentTextChanged.connect(self.get_dropdown_data)
         self.get_dropdown_data()
-        
 
-        
         layout2.addWidget(self.name_label)
         layout2.addWidget(self.dropdown)
         layout2.addWidget(self.stock_display_label)
@@ -118,40 +109,20 @@ class StainlessApp(QMainWindow):
         layout2.addWidget(self.save_new_sale)
         self.tab2.setLayout(layout2)
 
-
-
-
-
-
-
-
-
-
-
-
-
         # setup for tab3 for stocks
         self.table_widget = QTableWidget()
         self.table_widget.setColumnCount(3)
         self.table_widget.setHorizontalHeaderLabels(["Name", "Price", "Stock"])
         layout3 = QVBoxLayout()
 
-        #adding reset button
+        # adding reset button
         reset_butt = QPushButton("Reset Database")
         reset_butt.clicked.connect(self.delete_db)
-        
+
         layout3.addWidget(reset_butt)
         layout3.addWidget(self.table_widget)
         self.tab3.setLayout(layout3)
         self.load_db_to_table()
-
-
-        
-
-        
-
-
-
 
     # saves product to database
     def add_prod_to_db(self):
@@ -173,7 +144,7 @@ class StainlessApp(QMainWindow):
             except:
                 raise ValueError("Product cost must be a number!")
             # check if less than or equal to zero
-            
+
             if cost <= 0:
                 raise ValueError("Product cost must be greater than zero!")
 
@@ -199,13 +170,18 @@ class StainlessApp(QMainWindow):
             if stock < 0:
                 raise ValueError("Product stock cannot be less than zero!")
 
-            
             database.add_product(name, cost, sell, stock)
-            print(f"Product: {name} that costs: {cost} and sells: {sell} with a quantity of {stock} is saved!")
+            print(
+                f"Product: {name} that costs: {cost} and sells: {sell} with a quantity of {stock} is saved!"
+            )
             profit = sell - cost
-            QMessageBox.information(self, "Success", f"Product --{name}-- added successfully with a profit of {profit}!")
-            
-            #updates the dropdown options in tab2 for new sale
+            QMessageBox.information(
+                self,
+                "Success",
+                f"Product --{name}-- added successfully with a profit of {profit}!",
+            )
+
+            # updates the dropdown options in tab2 for new sale
             self.sale_prod_names_update()
 
             self.name_input.clear()
@@ -213,25 +189,11 @@ class StainlessApp(QMainWindow):
             self.sell_input.clear()
             self.stock_input.clear()
 
-            #automatically reloads and adds the new item for tab3
+            # automatically reloads and adds the new item for tab3
             self.load_db_to_table()
 
         except ValueError as e:
             QMessageBox.warning(self, "Input Error", str(e))
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
     def load_db_to_table(self):
         rows = database.fetch()
@@ -239,16 +201,7 @@ class StainlessApp(QMainWindow):
         for i, row in enumerate(rows):
             self.table_widget.setItem(i, 0, QTableWidgetItem(str(row[1])))
             self.table_widget.setItem(i, 1, QTableWidgetItem(str(row[3])))
-            self.table_widget.setItem(i, 2, QTableWidgetItem(str(row[4])))       
-                
-
-
-
-
-
-
-
-
+            self.table_widget.setItem(i, 2, QTableWidgetItem(str(row[4])))
 
     # prod names
     def sale_prod_names_update(self):
@@ -256,14 +209,7 @@ class StainlessApp(QMainWindow):
         self.dropdown.clear()
         self.dropdown.addItems(prod_names)
 
-        
-
-
-
-
-
-
-    # gets the product data 
+    # gets the product data
     def get_dropdown_data(self):
         selected_prod_name = self.dropdown.currentText()
         prod_data = database.fetch_prod_by_name(selected_prod_name)
@@ -278,11 +224,6 @@ class StainlessApp(QMainWindow):
             self.cost.setText(f"Unit Cost: {cost}")
             self.prod_id = prod_id
 
-
-
-
-
-
     # deletes the whole database for products
     def delete_db(self):
         delete_confirmation = QMessageBox.question(
@@ -290,7 +231,7 @@ class StainlessApp(QMainWindow):
             "WARNING",
             "Are you sure you want to delete all database?",
             QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No,
-            QMessageBox.StandardButton.No
+            QMessageBox.StandardButton.No,
         )
 
         if delete_confirmation == QMessageBox.StandardButton.Yes:
@@ -301,17 +242,9 @@ class StainlessApp(QMainWindow):
 
             QMessageBox.information(self, "Success", "The database has been reset.")
 
-
-
-
-
-
-
-
-
     def new_sale(self):
         id = self.prod_id
-        #prod = self.dropdown.currentText()
+        # prod = self.dropdown.currentText()
         sold = self.sold_to.text().strip()
         quantity = int(self.sale_quantity.text())
         cost_text = self.cost.text().replace("Unit Cost: ", "").strip()
@@ -319,34 +252,29 @@ class StainlessApp(QMainWindow):
         price_text = self.price_display_input.text().strip()
         if not price_text:
             price_text = self.price_display_input.placeholderText()
-            
+
         price = float(price_text)
-        #stock = self.stock _display_label
-
-
+        # stock = self.stock _display_label
 
         # gets the available stock then gets the text replaces the text with nothing then strips whitespaces
-        stock_int = int(self.stock_display_label.text().replace("Available stock: ", "").strip())
+        stock_int = int(
+            self.stock_display_label.text().replace("Available stock: ", "").strip()
+        )
 
         # gets the actual stock by deducting the bought quantity
-        stock = stock_int - quantity 
+        stock = stock_int - quantity
 
         # calls the function for updating the stock inside the database
-        database.update_product_stock(id, stock) 
-
-
+        database.update_product_stock(id, stock)
 
         database.new_sale(id, sold, quantity, cost, price)
-
-
-
 
         self.sold_to.clear()
         self.sale_quantity.clear()
         self.price_display_input.clear()
 
         # updates the stock when adding a new sale once button hits
-        self.get_dropdown_data() 
+        self.get_dropdown_data()
 
         # sale_id INTEGER PRIMARY KEY AUTOINCREMENT,
         # product_id INTEGER,
@@ -355,15 +283,6 @@ class StainlessApp(QMainWindow):
         # sale_quantity INTEGER NOT NULL,
         # unit_cost REAL NOT NULL,
         # selling_price REAL NOT NULL
-
-        
-
-
-
-
-
-
-
 
 
 if __name__ == "__main__":
