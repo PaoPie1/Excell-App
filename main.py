@@ -79,7 +79,7 @@ class StainlessApp(QMainWindow):
         self.price_display_label = QLabel("Price:")
         self.price_display_input = QLineEdit()
 
-        self.sold_to_label = QLabel("sold to:")
+        self.sold_to_label = QLabel("Sold to:")
         self.sold_to = QLineEdit()
         self.sold_to.setPlaceholderText("Enter name...")
 
@@ -243,46 +243,72 @@ class StainlessApp(QMainWindow):
             QMessageBox.information(self, "Success", "The database has been reset.")
 
     def new_sale(self):
-        id = self.prod_id
-        # prod = self.dropdown.currentText()
-        sold = self.sold_to.text().strip()
-        quantity = int(self.sale_quantity.text())
-        cost_text = self.cost.text().replace("Unit Cost: ", "").strip()
-        cost = float(cost_text)
-        price_text = self.price_display_input.text().strip()
-        if not price_text:
-            price_text = self.price_display_input.placeholderText()
+        try:
+            id = self.prod_id
+            # prod = self.dropdown.currentText()
 
-        price = float(price_text)
-        # stock = self.stock _display_label
+            price_text = self.price_display_input.text().strip()
+            if not price_text:
+                price_text = self.price_display_input.placeholderText()
 
-        # gets the available stock then gets the text replaces the text with nothing then strips whitespaces
-        stock_int = int(
-            self.stock_display_label.text().replace("Available stock: ", "").strip()
-        )
+            try:
+                price = float(price_text)
+            except:
+                raise ValueError("Product price must be a number!")
 
-        # gets the actual stock by deducting the bought quantity
-        stock = stock_int - quantity
+            quantity_text = self.sale_quantity.text().strip()
+            if not quantity_text:
+                raise ValueError("Product quantity must not be empty!")
 
-        # calls the function for updating the stock inside the database
-        database.update_product_stock(id, stock)
+            try:
+                quantity = int(quantity_text)
+            except:
+                raise ValueError("Product quantity must be a number!")
 
-        database.new_sale(id, sold, quantity, cost, price)
+            cost_text = self.cost.text().replace("Unit Cost: ", "").strip()
+            if not cost_text:
+                raise ValueError("Product cost cannot be empty!")
 
-        self.sold_to.clear()
-        self.sale_quantity.clear()
-        self.price_display_input.clear()
+            try:
+                cost = float(cost_text)
+            except:
+                raise ValueError("Product cost must be a number!")
 
-        # updates the stock when adding a new sale once button hits
-        self.get_dropdown_data()
+            sold = self.sold_to.text().strip()
+            if not sold:
+                raise ValueError("Customer name must not be empty!")
 
-        # sale_id INTEGER PRIMARY KEY AUTOINCREMENT,
-        # product_id INTEGER,
-        # sold_to TEXT NOT NULL,
-        # sale_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-        # sale_quantity INTEGER NOT NULL,
-        # unit_cost REAL NOT NULL,
-        # selling_price REAL NOT NULL
+            # stock = self.stock _display_label
+
+            # gets the available stock then gets the text replaces the text with nothing then strips whitespaces
+            stock_int = int(
+                self.stock_display_label.text().replace("Available stock: ", "").strip()
+            )
+
+            # gets the actual stock by deducting the bought quantity
+            stock = stock_int - quantity
+
+            # calls the function for updating the stock inside the database
+            database.update_product_stock(id, stock)
+
+            database.new_sale(id, sold, quantity, cost, price)
+
+            self.sold_to.clear()
+            self.sale_quantity.clear()
+            self.price_display_input.clear()
+
+            # updates the stock when adding a new sale once button hits
+            self.get_dropdown_data()
+
+            # sale_id INTEGER PRIMARY KEY AUTOINCREMENT,
+            # product_id INTEGER,
+            # sold_to TEXT NOT NULL,
+            # sale_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            # sale_quantity INTEGER NOT NULL,
+            # unit_cost REAL NOT NULL,
+            # selling_price REAL NOT NULL
+        except ValueError as e:
+            QMessageBox.warning(self, "Input Error", str(e))
 
 
 if __name__ == "__main__":
