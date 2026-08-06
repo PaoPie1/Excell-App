@@ -219,6 +219,9 @@ class StainlessApp(QMainWindow):
             price = prod_data[1]
             stock = prod_data[2]
             cost = prod_data[3]
+
+            # gets the amount of stock available
+            self.stock_quantity = stock
             self.stock_display_label.setText(f"Available stock: {stock}")
             self.price_display_input.setPlaceholderText(str(price))
             self.cost.setText(f"Unit Cost: {cost}")
@@ -243,6 +246,9 @@ class StainlessApp(QMainWindow):
             QMessageBox.information(self, "Success", "The database has been reset.")
 
     def new_sale(self):
+        # gets the product information to get the self.quantity
+        self.get_dropdown_data()
+
         try:
             id = self.prod_id
             # prod = self.dropdown.currentText()
@@ -264,6 +270,10 @@ class StainlessApp(QMainWindow):
                 quantity = int(quantity_text)
             except:
                 raise ValueError("Product quantity must be a number!")
+
+            # checks if quantity bought is less or equal to the stock available
+            if quantity > self.stock_quantity:
+                raise ValueError("Not enough inventory stock!")
 
             cost_text = self.cost.text().replace("Unit Cost: ", "").strip()
             if not cost_text:
@@ -298,6 +308,13 @@ class StainlessApp(QMainWindow):
             self.price_display_input.clear()
 
             # updates the stock when adding a new sale once button hits
+            self.load_db_to_table()
+
+            profit = (price - cost) * quantity
+            QMessageBox.information(
+                self, "New Sale!", f"Sale successful!\nTotal profit: {profit}"
+            )
+
             self.get_dropdown_data()
 
             # sale_id INTEGER PRIMARY KEY AUTOINCREMENT,
