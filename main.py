@@ -90,6 +90,13 @@ class StainlessApp(QMainWindow):
         self.sale_quantity_label = QLabel("Quantity:")
         self.sale_quantity = QLineEdit()
 
+        # starts the function to get the profit
+        self.profit_label = QLabel("Estimated Profit: 0")
+        # calls the function when the quantity input is changed
+        self.sale_quantity.textChanged.connect(self.get_profit)
+        # calls the function when the price input is changed
+        self.price_display_input.textChanged.connect(self.get_profit)
+
         self.save_new_sale.clicked.connect(self.new_sale)
 
         self.sale_prod_names_update()
@@ -104,6 +111,7 @@ class StainlessApp(QMainWindow):
         layout2.addWidget(self.price_display_input)
         layout2.addWidget(self.sale_quantity_label)
         layout2.addWidget(self.sale_quantity)
+        layout2.addWidget(self.profit_label)
         layout2.addWidget(self.sold_to_label)
         layout2.addWidget(self.sold_to)
         layout2.addWidget(self.save_new_sale)
@@ -326,6 +334,24 @@ class StainlessApp(QMainWindow):
             # selling_price REAL NOT NULL
         except ValueError as e:
             QMessageBox.warning(self, "Input Error", str(e))
+
+    # calculates profit
+    def get_profit(self):
+        cost_text = self.cost.text().replace("Unit Cost: ", "").strip()
+        cost = float(cost_text) if cost_text else 0.0
+
+        price_text = self.price_display_input.text().strip()
+        if not price_text:
+            price_text = self.price_display_input.placeholderText()
+        price = float(price_text) if price_text else 0.0
+
+        quantity_text = self.sale_quantity.text().strip()
+        quantity = int(quantity_text) if quantity_text else 0
+
+        profit = (price - cost) * quantity
+
+        # sends it back to the profit label
+        self.profit_label.setText(f"Estimated Profit: {profit:.2f}")
 
 
 if __name__ == "__main__":
