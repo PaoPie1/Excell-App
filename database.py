@@ -98,3 +98,10 @@ def delete_db():
 def new_sale(id, sold, quantity, cost, price):
     query = "INSERT INTO sales (product_id, sold_to, sale_quantity, unit_cost, selling_price) VALUES (?, ?, ?, ?, ?)"
     execute(query, (id, sold, quantity, cost, price))
+
+
+def fetch_sale_info():
+    with sqlite3.connect("stainless_store.db") as conn:
+        cursor = conn.cursor()
+        cursor.execute("SELECT * FROM sales")
+        return cursor.fetchall()

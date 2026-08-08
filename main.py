@@ -80,8 +80,10 @@ class StainlessApp(QMainWindow):
         self.price_display_input = QLineEdit()
 
         self.sold_to_label = QLabel("Sold to:")
-        self.sold_to = QLineEdit()
-        self.sold_to.setPlaceholderText("Enter name...")
+        self.sold_to = QComboBox()
+        self.sold_to.setEditable(True)
+        self.sold_to.lineEdit().setPlaceholderText("Enter or select name...")
+        self.fetch_customer_name()
 
         self.save_new_sale = QPushButton("Add Sale")
 
@@ -292,7 +294,8 @@ class StainlessApp(QMainWindow):
             except:
                 raise ValueError("Product cost must be a number!")
 
-            sold = self.sold_to.text().strip()
+            # since it was changed to QComboBox
+            sold = self.sold_to.currentText().strip()
             if not sold:
                 raise ValueError("Customer name must not be empty!")
 
@@ -311,7 +314,11 @@ class StainlessApp(QMainWindow):
 
             database.new_sale(id, sold, quantity, cost, price)
 
-            self.sold_to.clear()
+            if self.sold_to.findText(sold) == -1:
+                self.sold_to.addItem(sold)
+
+            # only clears the one inside but not the whole dropdown
+            self.sold_to.clearEditText()
             self.sale_quantity.clear()
             self.price_display_input.clear()
 
@@ -352,6 +359,14 @@ class StainlessApp(QMainWindow):
 
         # sends it back to the profit label
         self.profit_label.setText(f"Estimated Profit: {profit:.2f}")
+
+    def fetch_customer_name(self):
+        rows = database.fetch_sale_info()
+        for row in rows:
+            name = row[2]
+
+            if name and self.sold_to.findText(name) == -1:
+                self.sold_to.addItem(name)
 
 
 if __name__ == "__main__":
